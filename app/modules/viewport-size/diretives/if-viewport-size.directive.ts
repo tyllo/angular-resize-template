@@ -6,11 +6,10 @@ import {
   ViewContainerRef,
   OnInit,
   OnDestroy,
-  ChangeDetectorRef,
 } from '@angular/core';
 
-import { ViewportSizesEnum } from './viewport-sizes.enum';
-import { ViewportSizesService } from './viewport-sizes.service';
+import { ViewportSizesEnum } from '../viewport-sizes.enum';
+import { ViewportSizesService } from '../providers/viewport-sizes.service';
 
 @Directive({
   selector: '[ifViewportSize]',

@@ -4,7 +4,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import {
   ViewportSizeModule,
   VIEWPORT_SIZES_SERVICE_SETTINGS,
-} from './viewport-size/viewport-size.module';
+} from './modules/viewport-size/viewport-size.module';
 
 import { AppComponent } from './app.component';
 import { HelloComponent } from './hello.component';

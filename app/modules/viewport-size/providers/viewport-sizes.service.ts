@@ -2,7 +2,7 @@ import { fromEvent, animationFrameScheduler, Subscription, Observable } from 'rx
 import { debounceTime, startWith, map, distinctUntilChanged, shareReplay, observeOn } from 'rxjs/operators';
 import { Injectable, InjectionToken, Inject, ApplicationRef, NgZone, OnDestroy } from '@angular/core';
 
-import { ViewportSizesEnum as Enum } from './viewport-sizes.enum';
+import { ViewportSizesEnum as Enum } from '../viewport-sizes.enum';
 
 export interface IConfig {
   medium: number;

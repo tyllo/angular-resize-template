@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 
-import { IfViewportSizeDirective } from './if-viewport-size.directive';
-import { ViewportSizesService, VIEWPORT_SIZES_SERVICE_SETTINGS } from './viewport-sizes.service';
+import { IfViewportSizeDirective } from './diretives/if-viewport-size.directive';
+import { ViewportSizesService, VIEWPORT_SIZES_SERVICE_SETTINGS } from './providers/viewport-sizes.service';
 
 export { VIEWPORT_SIZES_SERVICE_SETTINGS };
 
