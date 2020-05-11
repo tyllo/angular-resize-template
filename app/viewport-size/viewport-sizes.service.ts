@@ -1,6 +1,6 @@
-import { fromEvent, Subject, animationFrameScheduler } from 'rxjs';
-import { debounceTime, startWith, map, distinctUntilChanged, shareReplay, observeOn, tap } from 'rxjs/operators';
-import { Injectable, InjectionToken, Inject, ApplicationRef, NgZone } from '@angular/core';
+import { fromEvent, animationFrameScheduler, Subscription, Observable } from 'rxjs';
+import { debounceTime, startWith, map, distinctUntilChanged, shareReplay, observeOn } from 'rxjs/operators';
+import { Injectable, InjectionToken, Inject, ApplicationRef, NgZone, OnDestroy } from '@angular/core';
 
 import { ViewportSizesEnum as Enum } from './viewport-sizes.enum';
 
@@ -29,7 +29,7 @@ const getViewportSizeFabric = (config: IConfig) => () => {
   return Enum.large;
 };
 
-const createSizesObservable = (config: IConfig, applicationRef: ApplicationRef, time: number) => {
+const createSizesObservable = (config: IConfig, time: number): Observable<Enum> => {
   const getViewportSize = getViewportSizeFabric(config);
   const initValue = getViewportSize();
 
@@ -41,19 +41,19 @@ const createSizesObservable = (config: IConfig, applicationRef: ApplicationRef, 
       debounceTime(time),
       map(getViewportSize),
       distinctUntilChanged(),
-      // TODO: нужно вручную запускать tick из-за zone.runOutsideAngular ((
-      tap(() => setTimeout(() => applicationRef.tick(), 0)),
       shareReplay({ refCount: true, bufferSize: 1 })
-    ) as Subject<Enum>
+    )
 };
 
 @Injectable({
   providedIn: 'root',
 })
-export class ViewportSizesService {
-  private _size$: Subject<Enum>;
+export class ViewportSizesService implements OnDestroy {
+  private _size$: Observable<Enum>;
 
   private _sizes = SIZES.DEFAULT;
+
+  private subscription: Subscription;
 
   get size$() {
     return this._size$;
@@ -70,10 +70,21 @@ export class ViewportSizesService {
   ) {
 
     zone.runOutsideAngular(() => {
-      const size$ = createSizesObservable(config, applicationRef, RESIZE_DEBOUNCE_TIME);
+      const size$ = createSizesObservable(config, RESIZE_DEBOUNCE_TIME);
       this._size$ = size$;
-      size$.subscribe(this.handler.bind(this));
+      this.subscription = size$.subscribe((size: Enum) => {
+        this.handler(size);
+        // TODO: нужно вручную запускать tick из-за zone.runOutsideAngular ((
+        const timerId = setTimeout(() => applicationRef.tick());
+        return () => clearTimeout(timerId);
+      });
     });
+  }
+
+  ngOnDestroy() {
+    if (this.subscription) {
+      this.subscription.unsubscribe();
+    }
   }
 
   private handler(size: Enum) {

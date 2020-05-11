@@ -18,7 +18,7 @@ import { ViewportSizesService } from './viewport-sizes.service';
 export class IfViewportSizeDirective implements OnInit, OnDestroy {
   private isActive = false;
 
-  private subscription$?: Subscription;
+  private subscription?: Subscription;
 
   private size?: ViewportSizesEnum;
 
@@ -36,13 +36,13 @@ export class IfViewportSizeDirective implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscription$ = this.viewportSizesService.size$
+    this.subscription = this.viewportSizesService.size$
       .subscribe(this.handler.bind(this));
   }
 
   ngOnDestroy() {
-    if (this.subscription$) {
-      this.subscription$.unsubscribe();
+    if (this.subscription) {
+      this.subscription.unsubscribe();
     }
   }
 
