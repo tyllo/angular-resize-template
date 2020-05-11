@@ -23,6 +23,7 @@ const SIZES = {
 };
 
 const getViewportSizeFabric = (config: IConfig) => () => {
+  // TODO: inject window
   if (window.innerWidth < config.medium) return Enum.small;
   if (window.innerWidth < config.large) return Enum.medium;
   return Enum.large;
@@ -32,6 +33,7 @@ const createSizesObservable = (config: IConfig, applicationRef: ApplicationRef, 
   const getViewportSize = getViewportSizeFabric(config);
   const initValue = getViewportSize();
 
+  // TODO: inject window
   return fromEvent(window, 'resize')
     .pipe(
       observeOn(animationFrameScheduler),
