@@ -66,18 +66,14 @@ export class ViewportSizesService implements OnDestroy {
   constructor(
     @Inject(VIEWPORT_SIZES_SERVICE_SETTINGS) private config: IConfig,
     private zone: NgZone,
-    private applicationRef: ApplicationRef,
   ) {
 
-    zone.runOutsideAngular(() => {
-      const size$ = createSizesObservable(config, RESIZE_DEBOUNCE_TIME);
-      this._size$ = size$;
-      this.subscription = size$.subscribe((size: Enum) => {
-        this.handler(size);
-        // TODO: нужно вручную запускать tick из-за zone.runOutsideAngular ((
-        const timerId = setTimeout(() => applicationRef.tick());
-        return () => clearTimeout(timerId);
-      });
+    this._size$ = zone.runOutsideAngular(() => (
+      createSizesObservable(config, RESIZE_DEBOUNCE_TIME
+    )));
+
+    this.subscription = this._size$.subscribe((size: Enum) => {
+      this.handler(size);
     });
   }
 
