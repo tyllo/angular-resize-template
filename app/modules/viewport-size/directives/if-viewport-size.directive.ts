@@ -26,7 +26,6 @@ export class IfViewportSizeDirective implements OnInit, OnDestroy {
     private templateRef: TemplateRef<void>,
     private viewContainerRef: ViewContainerRef,
     private viewportSizesService: ViewportSizesService,
-    private changeDetectorRef: ChangeDetectorRef,
   ) {
   }
 
@@ -66,13 +65,11 @@ export class IfViewportSizeDirective implements OnInit, OnDestroy {
     if (this.isActive) return;
     this.viewContainerRef.createEmbeddedView(this.templateRef);
     this.isActive = true;
-    this.changeDetectorRef.detectChanges();
   }
 
   clear() {
     if (!this.isActive) return;
     this.viewContainerRef.clear();
     this.isActive = false;
-    this.changeDetectorRef.detectChanges();
   }
 }
