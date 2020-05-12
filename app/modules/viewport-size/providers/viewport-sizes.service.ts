@@ -69,8 +69,8 @@ export class ViewportSizesService implements OnDestroy {
   ) {
 
     this._size$ = zone.runOutsideAngular(() => (
-      createSizesObservable(config, RESIZE_DEBOUNCE_TIME
-    )));
+      createSizesObservable(config, RESIZE_DEBOUNCE_TIME)
+    ));
 
     this.subscription = this._size$.subscribe((size: Enum) => {
       this.handler(size);
