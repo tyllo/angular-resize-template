@@ -4,7 +4,7 @@ import {
   Input,
   TemplateRef,
   ViewContainerRef,
-  ChangeDetectorRef,
+  EmbeddedViewRef,
   OnInit,
   OnDestroy,
 } from '@angular/core';
@@ -16,7 +16,7 @@ import { ViewportSizesService } from '../providers/viewport-sizes.service';
   selector: '[ifViewportSize]',
 })
 export class IfViewportSizeDirective implements OnInit, OnDestroy {
-  private isActive = false;
+  private embeddedViewRef?: EmbeddedViewRef<unknown>;
 
   private subscription?: Subscription;
 
@@ -44,6 +44,8 @@ export class IfViewportSizeDirective implements OnInit, OnDestroy {
     if (this.subscription) {
       this.subscription.unsubscribe();
     }
+
+    // TODO: needs clear viewContainerRef?
   }
 
   handler() {
@@ -62,14 +64,15 @@ export class IfViewportSizeDirective implements OnInit, OnDestroy {
   }
 
   insert() {
-    if (this.isActive) return;
-    this.viewContainerRef.createEmbeddedView(this.templateRef);
-    this.isActive = true;
+    if (this.embeddedViewRef) return;
+    const embeddedViewRef = this.viewContainerRef.createEmbeddedView(this.templateRef);
+    embeddedViewRef.detectChanges();
+    this.embeddedViewRef = embeddedViewRef;
   }
 
   clear() {
-    if (!this.isActive) return;
-    this.viewContainerRef.clear();
-    this.isActive = false;
+    if (!this.embeddedViewRef) return;
+    this.embeddedViewRef.destroy();
+    this.embeddedViewRef = void 0;
   }
 }

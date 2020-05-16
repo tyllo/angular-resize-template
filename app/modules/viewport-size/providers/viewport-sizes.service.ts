@@ -49,11 +49,11 @@ const createSizesObservable = (config: IConfig, time: number): Observable<Enum> 
   providedIn: 'root',
 })
 export class ViewportSizesService implements OnDestroy {
-  private _size$: Observable<Enum>;
+  private _size$?: Observable<Enum>;
 
   private _sizes = SIZES.DEFAULT;
 
-  private subscription: Subscription;
+  private subscription?: Subscription;
 
   get size$() {
     return this._size$;
@@ -68,12 +68,9 @@ export class ViewportSizesService implements OnDestroy {
     private zone: NgZone,
   ) {
 
-    this._size$ = zone.runOutsideAngular(() => (
-      createSizesObservable(config, RESIZE_DEBOUNCE_TIME)
-    ));
-
-    this.subscription = this._size$.subscribe((size: Enum) => {
-      this.handler(size);
+    zone.runOutsideAngular(() => {
+      this._size$ = createSizesObservable(config, RESIZE_DEBOUNCE_TIME);
+      this.subscription = this.size$.subscribe(size => this.handler(size));
     });
   }
 
